@@ -6,9 +6,16 @@ import org.bukkit.plugin.Plugin;
 
 public class Config
 {
+    public static boolean useMysql;
+
     public static FileConfiguration getConfig ()
     {
         return PerWorldInventory.getInstance().getConfig();
+    }
+
+    public static void loadConfig ()
+    {
+        useMysql = getConfig().getBoolean("useMySQL");
     }
 
     public static void reloadConfig ()
@@ -17,6 +24,8 @@ public class Config
 
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
+
+        loadConfig();
     }
 
     public static void saveConfig ()

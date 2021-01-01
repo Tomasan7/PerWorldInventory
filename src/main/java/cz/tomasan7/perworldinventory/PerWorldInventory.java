@@ -5,16 +5,10 @@ import cz.tomasan7.perworldinventory.events.PlayerJoin;
 import cz.tomasan7.perworldinventory.events.PlayerLeave;
 import cz.tomasan7.perworldinventory.events.WorldSwitch;
 import cz.tomasan7.perworldinventory.other.*;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 public final class PerWorldInventory extends JavaPlugin
 {
@@ -38,6 +32,7 @@ public final class PerWorldInventory extends JavaPlugin
         getConfig().options().copyDefaults(true);
 
         Messages.loadMessages();
+        Config.loadConfig();
 
         if (Config.getConfig().getBoolean("useMySQL"))
             mainDatabase = new MySQL(Config.getConfig().getConfigurationSection("MySQL"));

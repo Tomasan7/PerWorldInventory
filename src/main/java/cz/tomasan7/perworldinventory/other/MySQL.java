@@ -11,11 +11,11 @@ import java.util.logging.Logger;
 
 public class MySQL extends Database
 {
-    private String host;
-    private int port;
-    private String database;
-    private String username;
-    private String password;
+    private final String host;
+    private final int port;
+    private final String database;
+    private final String username;
+    private final String password;
 
     public MySQL (ConfigurationSection authSection)
     {
@@ -42,7 +42,7 @@ public class MySQL extends Database
                 if (isConnected())
                     return;
 
-                if (!Config.getConfig().getBoolean("useMySQL"))
+                if (!Config.useMysql)
                 {
                     cancel();
                     return;

@@ -30,7 +30,7 @@ public class Messages
 
     public static void Send (CommandSender sender, TextComponent textComponent)
     {
-        TextComponent result = new TextComponent(prefix + " ");
+        TextComponent result = new TextComponent(prefix);
         result.addExtra(textComponent);
         sender.spigot().sendMessage(result);
     }

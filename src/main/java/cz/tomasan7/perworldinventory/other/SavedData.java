@@ -13,17 +13,21 @@ public class SavedData
     private SavedDataElement exp;
     private SavedDataElement potionEffects;
     private SavedDataElement balance;
+    private SavedDataElement air;
+    private SavedDataElement fire;
 
     public SavedData ()
     {
         this.inventory = new SavedDataElement("inventory", true, null);
         this.enderChest = new SavedDataElement("enderChest", true, null);
-        this.health = new SavedDataElement("health", true, 20d);
-        this.hunger = new SavedDataElement("hunger", true, 20d);
-        this.level = new SavedDataElement("level", true, 0);
-        this.exp = new SavedDataElement("exp", true, 0f);
+        this.health = new SavedDataElement("health", true, null);
+        this.hunger = new SavedDataElement("hunger", true, null);
+        this.level = new SavedDataElement("level", true, null);
+        this.exp = new SavedDataElement("exp", true, null);
         this.potionEffects = new SavedDataElement("potionEffects", true, null);
-        this.balance = new SavedDataElement("balance", false, 0d);
+        this.balance = new SavedDataElement("balance", false, null);
+        this.air = new SavedDataElement("air", true, null);
+        this.fire = new SavedDataElement("fire", true, null);
     }
 
     public SavedData (ConfigurationSection section)
@@ -36,6 +40,8 @@ public class SavedData
         this.exp = new SavedDataElement(section.getConfigurationSection("exp"));
         this.potionEffects = new SavedDataElement(section.getConfigurationSection("potionEffects"));
         this.balance = new SavedDataElement(section.getConfigurationSection("balance"));
+        this.air = new SavedDataElement(section.getConfigurationSection("air"));
+        this.fire = new SavedDataElement(section.getConfigurationSection("fire"));
     }
 
     public ConfigurationSection Serialize ()
@@ -50,6 +56,8 @@ public class SavedData
         section.set(exp.getName(), exp.Serialize());
         section.set(potionEffects.getName(), potionEffects.Serialize());
         section.set(balance.getName(), balance.Serialize());
+        section.set(air.getName(), air.Serialize());
+        section.set(fire.getName(), fire.Serialize());
 
         return section;
     }
@@ -132,5 +140,25 @@ public class SavedData
     public void setBalance (SavedDataElement balance)
     {
         this.balance = balance;
+    }
+
+    public SavedDataElement getAir ()
+    {
+        return air;
+    }
+
+    public void setAir (SavedDataElement air)
+    {
+        this.air = air;
+    }
+
+    public SavedDataElement getFire ()
+    {
+        return fire;
+    }
+
+    public void setFire (SavedDataElement fire)
+    {
+        this.fire = fire;
     }
 }

@@ -50,7 +50,7 @@ public class Reload extends SubCommand
 
         PerWorldInventory.mainDatabase.Disconnect();
 
-        if (Config.getConfig().getBoolean("useMySQL"))
+        if (Config.useMysql)
             PerWorldInventory.mainDatabase = new MySQL(Config.getConfig().getConfigurationSection("MySQL"));
         else
             PerWorldInventory.mainDatabase = new SQLite("Database", true);
