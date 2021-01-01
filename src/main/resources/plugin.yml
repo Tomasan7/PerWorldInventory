@@ -1,0 +1,12 @@
+name: PerWorldInventory
+version: ${project.version}
+main: cz.tomasan7.perworldinventory.PerWorldInventory
+api-version: 1.16
+prefix: PerWorldInventory
+authors: [Toasan7]
+description: Plugin to have seperate inventories in different worlds.
+commands:
+  perworldinventory:
+    aliases: [pwi]
+    description: Main PerWorldInventory command.
+    usage: /pwi <sub-command>

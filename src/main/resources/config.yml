@@ -1,0 +1,15 @@
+useMySQL: true
+
+MySQL:
+  host: localhost
+  port: 3306
+  database: mydatabase
+  username: root
+  password: password
+
+Messages:
+  prefix: '&b&l[&3&lPWI&b&l] &r'
+  no-permission: '&cYou don''t have permission to do that.'
+  server-shutdown-kick: 'Server closed'
+  mysql-fail-kick: '&cServer crashed, please report it to support.'
+  mysql-not-connected: '&cDatabase not connected.'
