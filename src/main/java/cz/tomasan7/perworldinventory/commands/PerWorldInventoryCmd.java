@@ -27,6 +27,7 @@ public class PerWorldInventoryCmd implements TabExecutor
         subCommands.add(new DeleteGroup());
         subCommands.add(new RemoveWorld());
         subCommands.add(new RenameGroup());
+        subCommands.add(new EditGroups());
     }
 
     @Override

@@ -4,6 +4,7 @@ import cz.tomasan7.perworldinventory.commands.PerWorldInventoryCmd;
 import cz.tomasan7.perworldinventory.events.PlayerJoin;
 import cz.tomasan7.perworldinventory.events.PlayerLeave;
 import cz.tomasan7.perworldinventory.events.WorldSwitch;
+import cz.tomasan7.perworldinventory.menus.MenuEvents;
 import cz.tomasan7.perworldinventory.other.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -55,6 +56,8 @@ public final class PerWorldInventory extends JavaPlugin
         getServer().getPluginManager().registerEvents(new WorldSwitch(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
         getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
+        //getServer().getPluginManager().registerEvents(new GroupsGUI(), this);
+        getServer().getPluginManager().registerEvents(new MenuEvents(), this);
         //#region PerWorldInventory
         getCommand("perworldinventory").setExecutor(new PerWorldInventoryCmd());
         getCommand("perworldinventory").setTabCompleter(new PerWorldInventoryCmd());
