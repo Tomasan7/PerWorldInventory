@@ -2,27 +2,32 @@ package cz.tomasan7.perworldinventory.other;
 
 import cz.tomasan7.perworldinventory.PerWorldInventory;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.Plugin;
 
 public class Config
 {
     public static boolean useMysql;
 
+    private static final PerWorldInventory plugin;
+    private static FileConfiguration config;
+
+    static
+    {
+        plugin = PerWorldInventory.getInstance();
+    }
+
     public static FileConfiguration getConfig ()
     {
-        return PerWorldInventory.getInstance().getConfig();
+        return config;
     }
 
     public static void loadConfig ()
     {
-        useMysql = getConfig().getBoolean("useMySQL");
+        config = plugin.getConfig();
+        useMysql = config.getBoolean("useMySQL");
     }
 
     public static void reloadConfig ()
     {
-        Plugin plugin = PerWorldInventory.getInstance();
-
-        plugin.saveDefaultConfig();
         plugin.reloadConfig();
 
         loadConfig();
@@ -30,8 +35,6 @@ public class Config
 
     public static void saveConfig ()
     {
-        Plugin plugin = PerWorldInventory.getInstance();
-
         plugin.saveConfig();
     }
 }

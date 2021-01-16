@@ -6,7 +6,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -15,9 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Group
 {
@@ -481,8 +478,6 @@ public class Group
         {
             String data = PlayerData.getPlayerData(player).Serialize();
 
-            Bukkit.broadcastMessage(data);
-
             Database database = PerWorldInventory.mainDatabase;
 
             PreparedStatement statement = database.getConnection().prepareStatement(database.insert_player_data("pwi_" + this.name));
@@ -522,10 +517,7 @@ public class Group
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next())
-            {
-                Bukkit.broadcastMessage(resultSet.getString("data"));
                 return new PlayerData(resultSet.getString("data"));
-            }
 
             resultSet.close();
             statement.close();

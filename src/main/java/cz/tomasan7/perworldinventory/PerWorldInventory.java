@@ -1,10 +1,11 @@
 package cz.tomasan7.perworldinventory;
 
-import cz.tomasan7.perworldinventory.commands.PerWorldInventoryCmd;
-import cz.tomasan7.perworldinventory.events.PlayerJoin;
-import cz.tomasan7.perworldinventory.events.PlayerLeave;
-import cz.tomasan7.perworldinventory.events.WorldSwitch;
-import cz.tomasan7.perworldinventory.menus.MenuEvents;
+import cz.tomasan7.perworldinventory.Commands.PerWorldInventoryCmd;
+import cz.tomasan7.perworldinventory.Events.PlayerJoin;
+import cz.tomasan7.perworldinventory.Events.PlayerLeave;
+import cz.tomasan7.perworldinventory.Events.WorldSwitch;
+import cz.tomasan7.perworldinventory.Menus.MenuEvents;
+import cz.tomasan7.perworldinventory.ResponseSystem.ResponseManager;
 import cz.tomasan7.perworldinventory.other.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,11 +30,8 @@ public final class PerWorldInventory extends JavaPlugin
 
         RegisterCommandsAndEvents();
 
-        saveDefaultConfig();
-        getConfig().options().copyDefaults(true);
-
-        Messages.loadMessages();
         Config.loadConfig();
+        Messages.loadMessages();
 
         if (Config.getConfig().getBoolean("useMySQL"))
             mainDatabase = new MySQL(Config.getConfig().getConfigurationSection("MySQL"));
@@ -46,7 +44,6 @@ public final class PerWorldInventory extends JavaPlugin
     @Override
     public void onDisable ()
     {
-        //Groups.kickAndSaveAllPlayers(Messages.serverShutdownKick());
         mainDatabase.Disconnect();
         Group.saveGroups();
     }
@@ -56,8 +53,8 @@ public final class PerWorldInventory extends JavaPlugin
         getServer().getPluginManager().registerEvents(new WorldSwitch(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
         getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
-        //getServer().getPluginManager().registerEvents(new GroupsGUI(), this);
         getServer().getPluginManager().registerEvents(new MenuEvents(), this);
+        getServer().getPluginManager().registerEvents(new ResponseManager(), this);
         //#region PerWorldInventory
         getCommand("perworldinventory").setExecutor(new PerWorldInventoryCmd());
         getCommand("perworldinventory").setTabCompleter(new PerWorldInventoryCmd());
