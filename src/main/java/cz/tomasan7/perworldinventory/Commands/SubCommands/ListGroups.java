@@ -44,16 +44,16 @@ public class ListGroups implements SubCommand
     {
         if (Group.getGroups().isEmpty())
         {
-            Messages.Send(sender, "§2There are no groups created yet.");
+            Messages.send(sender, "§2There are no groups created yet.");
             return;
         }
 
         for (Group group : Group.getGroups())
         {
-            Messages.Send(sender, "§2" + group.getName());
+            Messages.send(sender, "§2" + group.getName());
 
             for (String world : group.getWorlds())
-                Messages.Send(sender, "  - " + world);
+                Messages.send(sender, "  - " + world);
         }
 
     }

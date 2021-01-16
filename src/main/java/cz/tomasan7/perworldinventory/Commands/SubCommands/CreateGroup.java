@@ -52,11 +52,11 @@ public class CreateGroup implements SubCommand
         }
         catch (Exception exception)
         {
-            Messages.Send(sender, "§cUsage: §e" + getSyntax());
+            Messages.send(sender, "§cUsage: §e" + getSyntax());
             return;
         }
 
         GroupActionResult result = Group.createGroup(groupName);
-        Messages.Send(sender, result.message);
+        Messages.send(sender, result.message);
     }
 }

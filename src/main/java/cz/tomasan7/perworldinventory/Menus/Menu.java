@@ -18,13 +18,13 @@ public abstract class Menu implements InventoryHolder
 {
     protected static final ItemStack fill_item;
 
-    protected Inventory inventory;
-    protected final List<MenuItem> menuItems;
-
     static
     {
         fill_item = createItem(" ", Material.BLACK_STAINED_GLASS_PANE, null, 1);
     }
+
+    protected final List<MenuItem> menuItems;
+
 
     public Menu ()
     {
@@ -38,7 +38,7 @@ public abstract class Menu implements InventoryHolder
     @Override
     public Inventory getInventory ()
     {
-        inventory = Bukkit.createInventory(this, getSize(), getTitle());
+        Inventory inventory = Bukkit.createInventory(this, getSize(), getTitle());
         setMenuItems();
 
         for (int i = 0; i < inventory.getSize(); i++)

@@ -23,12 +23,12 @@ public class Messages
         mysql_fail_kick = Utils.formatText(Config.getConfig().getString(path + "mysql-fail-kick"));
     }
 
-    public static void Send (CommandSender sender, String message)
+    public static void send (CommandSender sender, String message)
     {
         sender.sendMessage(prefix + message);
     }
 
-    public static void Send (CommandSender sender, TextComponent textComponent)
+    public static void send (CommandSender sender, TextComponent textComponent)
     {
         TextComponent result = new TextComponent(prefix);
         result.addExtra(textComponent);

@@ -1,5 +1,6 @@
 package cz.tomasan7.perworldinventory.ResponseSystem;
 
+import cz.tomasan7.perworldinventory.other.Messages;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -30,6 +31,7 @@ public class ResponseWaiterRunnable extends BukkitRunnable
             if (time <= 0)
             {
                 entry.getKey().sendMessage(entry.getValue().getTimeoutMessage());
+                Messages.send(entry.getKey(), entry.getValue().getTimeoutMessage());
                 waiters.remove(entry.getKey());
             }
             else

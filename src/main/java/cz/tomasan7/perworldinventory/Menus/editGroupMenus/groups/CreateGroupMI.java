@@ -5,6 +5,7 @@ import cz.tomasan7.perworldinventory.Menus.MenuItem;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseGroupAction;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseManager;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseWaiter;
+import cz.tomasan7.perworldinventory.other.Messages;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -38,5 +39,6 @@ public class CreateGroupMI extends MenuItem
 
         ResponseManager.AddWaiter(player, responseWaiter);
         player.closeInventory();
+        Messages.send(player, "§eEnter the group name:");
     }
 }

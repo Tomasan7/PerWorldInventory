@@ -57,6 +57,6 @@ public class Reload implements SubCommand
         PerWorldInventory.mainDatabase.Connect(15);
 
         PerWorldInventory.getInstance().getLogger().info("§2Configuration and Groups reloaded by " + sender.getName() + "§2.");
-        Messages.Send(sender, "§2Configuration and Groups reloaded.");
+        Messages.send(sender, "§2Configuration and Groups reloaded.");
     }
 }

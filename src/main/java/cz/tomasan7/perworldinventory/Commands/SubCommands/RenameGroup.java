@@ -60,7 +60,7 @@ public class RenameGroup implements SubCommand
         }
         catch (Exception exception)
         {
-            Messages.Send(sender, "§cUsage: §e" + getSyntax());
+            Messages.send(sender, "§cUsage: §e" + getSyntax());
             return;
         }
 
@@ -68,11 +68,11 @@ public class RenameGroup implements SubCommand
 
         if (group == null)
         {
-            Messages.Send(sender, "§cGroup §l" + groupName + " §cdoesn't exist.");
+            Messages.send(sender, "§cGroup §l" + groupName + " §cdoesn't exist.");
             return;
         }
 
         GroupActionResult result = group.setName(newGroupName);
-        Messages.Send(sender, result.message);
+        Messages.send(sender, result.message);
     }
 }

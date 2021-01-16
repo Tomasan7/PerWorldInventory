@@ -57,7 +57,7 @@ public class PerWorldInventoryCmd implements TabExecutor
                     showHelp = false;
                 }
                 else
-                    Messages.Send(sender, Messages.no_permission);
+                    Messages.send(sender, Messages.no_permission);
                 break;
             }
         }
@@ -76,7 +76,7 @@ public class PerWorldInventoryCmd implements TabExecutor
     {
         if (!sender.hasPermission("pwi.help"))
         {
-            Messages.Send(sender, Messages.no_permission);
+            Messages.send(sender, Messages.no_permission);
             return;
         }
 
