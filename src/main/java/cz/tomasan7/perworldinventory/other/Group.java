@@ -93,9 +93,11 @@ public class Group
             return new GroupActionResult(false, Messages.mysql_not_connected);
         }
 
+        String oldName = this.name;
+
         this.name = newName;
 
-        return new GroupActionResult(true, "§2Group §l" + this.name + " §2was created.");
+        return new GroupActionResult(true, "§2Group §l" + oldName + " §2was renamed to §l " + this.name + "§2.");
     }
 
     /**

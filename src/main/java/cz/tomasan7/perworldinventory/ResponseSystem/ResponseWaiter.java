@@ -5,40 +5,30 @@ import cz.tomasan7.perworldinventory.other.Group;
 
 public class ResponseWaiter
 {
-    private ResponseGroupAction action;
-    private Group group;
-    private Menu menuToOpen;
+    private final ResponseGroupAction action;
+    private final Group group;
+    private final Menu menuToOpen;
 
     private int time;
-    private String timeoutMessage;
-    public static String default_timeout_message = "Your request timed out.";
+    private final String timeoutMessage;
+    private final String cancelMessage;
+    public static String default_timeout_message = "§eYour request timed out.";
+    public static String default_cancel_message = "§eYour request has been cancelled.";
     public static int default_timeout_time = 30;
 
-    public ResponseWaiter (ResponseGroupAction action, Group group, Menu menuToOpen, int timeoutTime, String timeoutMessage)
+    public ResponseWaiter (ResponseGroupAction action, Group group, Menu menuToOpen, int timeoutTime, String timeoutMessage, String cancelMessage)
     {
         this.action = action;
         this.group = group;
         this.menuToOpen = menuToOpen;
         this.time = timeoutTime;
         this.timeoutMessage = timeoutMessage;
+        this.cancelMessage = cancelMessage;
     }
 
     public ResponseWaiter (ResponseGroupAction action, Group group, Menu menuToOpen)
     {
-        this.action = action;
-        this.group = group;
-        this.menuToOpen = menuToOpen;
-        this.time = default_timeout_time;
-        this.timeoutMessage = default_timeout_message;
-    }
-
-    public ResponseWaiter (ResponseGroupAction action, Group group, Menu menuToOpen, String timeoutMessage)
-    {
-        this.action = action;
-        this.group = group;
-        this.menuToOpen = menuToOpen;
-        this.time = default_timeout_time;
-        this.timeoutMessage = timeoutMessage;
+        this(action, group, menuToOpen, default_timeout_time, default_timeout_message, default_cancel_message);
     }
 
     public ResponseGroupAction getAction ()
@@ -69,5 +59,10 @@ public class ResponseWaiter
     public String getTimeoutMessage ()
     {
         return timeoutMessage;
+    }
+
+    public String getCancelMessage ()
+    {
+        return cancelMessage;
     }
 }

@@ -29,8 +29,7 @@ public class MenuEvents implements Listener
     @EventHandler
     public void onMenuClose (InventoryCloseEvent event)
     {
-        /*
-        InventoryHolder holder = event.getInventory().getHolder();
+        /*InventoryHolder holder = event.getInventory().getHolder();
 
         if (!(holder instanceof Menu))
             return;
@@ -38,6 +37,6 @@ public class MenuEvents implements Listener
         Menu closingMenu = ((Menu) holder).getClosingMenu();
 
         if (closingMenu != null)
-            Menu.openOneTickLater((Player) event.getPlayer(), closingMenu);*/
+            closingMenu.openOneTickLater((Player) event.getPlayer());*/
     }
 }

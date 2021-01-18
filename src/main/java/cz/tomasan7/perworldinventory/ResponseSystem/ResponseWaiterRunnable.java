@@ -30,7 +30,6 @@ public class ResponseWaiterRunnable extends BukkitRunnable
 
             if (time <= 0)
             {
-                entry.getKey().sendMessage(entry.getValue().getTimeoutMessage());
                 Messages.send(entry.getKey(), entry.getValue().getTimeoutMessage());
                 waiters.remove(entry.getKey());
             }

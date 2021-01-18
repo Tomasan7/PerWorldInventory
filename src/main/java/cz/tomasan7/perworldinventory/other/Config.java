@@ -22,6 +22,8 @@ public class Config
 
     public static void loadConfig ()
     {
+        plugin.saveDefaultConfig();
+
         config = plugin.getConfig();
         useMysql = config.getBoolean("useMySQL");
     }

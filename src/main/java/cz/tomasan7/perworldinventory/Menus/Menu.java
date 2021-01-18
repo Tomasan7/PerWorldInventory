@@ -17,10 +17,11 @@ import java.util.List;
 public abstract class Menu implements InventoryHolder
 {
     protected static final ItemStack fill_item;
+    public static final int ROW_SIZE = 9;
 
     static
     {
-        fill_item = createItem(" ", Material.BLACK_STAINED_GLASS_PANE, null, 1);
+        fill_item = createItem(" ", Material.GRAY_STAINED_GLASS_PANE, null, 1);
     }
 
     protected final List<MenuItem> menuItems;
@@ -50,6 +51,10 @@ public abstract class Menu implements InventoryHolder
                 inventory.setItem(menuItem.getSlot(), menuItem.getItemStack());
         }
 
+        BackMI backMI = new BackMI(this, "Back", getSize() - 1);
+        inventory.setItem(backMI.getSlot(), backMI.getItemStack());
+        menuItems.add(backMI);
+
         return inventory;
     }
 
@@ -65,6 +70,18 @@ public abstract class Menu implements InventoryHolder
             {
                 menuItem.clickAction(event);
                 return;
+            }
+        }
+
+        if (this instanceof PaginatedMenu)
+        {
+            for (MenuItem paginatedMenuItem : ((PaginatedMenu) this).paginatedMenuItems)
+            {
+                if (event.getCurrentItem().equals(paginatedMenuItem.getItemStack()))
+                {
+                    paginatedMenuItem.clickAction(event);
+                    return;
+                }
             }
         }
     }

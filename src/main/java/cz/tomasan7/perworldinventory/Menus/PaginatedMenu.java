@@ -14,56 +14,89 @@ public abstract class PaginatedMenu extends Menu
 
     static
     {
-        bottom_line_fill_item = createItem(" ", Material.GRAY_STAINED_GLASS_PANE, null, 1);
+        bottom_line_fill_item = createItem(" ", Material.BLACK_STAINED_GLASS_PANE, null, 1);
     }
 
-    protected Inventory inventory;
-    protected List<ItemStack[]> pages;
+    private Inventory inventory;
+    protected List<MenuItem> paginatedMenuItems;
+    private List<ItemStack[]> pages;
     private int currentPage;
 
     public PaginatedMenu ()
     {
         super();
-        this.pages = new ArrayList<ItemStack[]>();
-        inventory = Bukkit.createInventory(this, getSize(), getTitle());
-        currentPage = 0;
-
-        InitializePages();
     }
 
     @Override
     public Inventory getInventory ()
     {
+        Initialize();
         inventory.setContents(pages.get(0));
         return inventory;
     }
 
-    private void InitializePages ()
+    public void Initialize ()
     {
+
+        this.pages = new ArrayList<ItemStack[]>();
+        this.paginatedMenuItems = new ArrayList<MenuItem>();
+        inventory = Bukkit.createInventory(this, getSize(), getTitle());
+        currentPage = 0;
+
+        pages.clear();
+
         setMenuItems();
+        setPaginetedMenuItems();
 
-        int numberOfPages = (int) Math.ceil((double) menuItems.size() / (double) getSize());
+        int rowsCount = (int) Math.ceil((double) paginatedMenuItems.size() / ROW_SIZE);
+        int pagesCount = (int) Math.ceil((double) rowsCount / ((double) getSize() / ROW_SIZE));
+        rowsCount += pagesCount;
+        pagesCount = (int) Math.ceil((double) rowsCount / ((double) getSize() / ROW_SIZE));
 
-        int menuItemCursor = 0;
+        if (pagesCount == 0)
+            pagesCount = 1;
 
-        for (int pageI = 0; pageI < numberOfPages; pageI++)
+        MenuItem previousPageMI = new PreviousPageMI(this, "PreviousPage", getSize() - 7);
+        MenuItem nextPageMI = new NextPageMI(this, "NextPage", getSize() - 3);
+        BackMI backMI = new BackMI(this, "Back", getSize() - 1);
+
+        int paginatedMenuItemCursor = 0;
+
+        for (int pageI = 0; pageI < pagesCount; pageI++)
         {
             ItemStack[] page = addPage();
 
             for (int slot = 0; slot < page.length; slot++)
             {
-                if (slot >= getSize() - 9)
+                if (slot >= page.length - ROW_SIZE)
                     page[slot] = bottom_line_fill_item;
                 else
                 {
-                    if (menuItemCursor != menuItems.size())
-                        page[slot] = menuItems.get(menuItemCursor++).getItemStack();
+                    if (paginatedMenuItemCursor != paginatedMenuItems.size())
+                        page[slot] = paginatedMenuItems.get(paginatedMenuItemCursor++).getItemStack();
                     else
                         page[slot] = fill_item;
                 }
             }
+
+            if (pageI != 0)
+                page[previousPageMI.getSlot()] = previousPageMI.getItemStack();
+
+            if (pageI == pagesCount - 2)
+                page[nextPageMI.getSlot()] = previousPageMI.getItemStack();
+
+            page[backMI.getSlot()] = backMI.getItemStack();
+
+            for (MenuItem menuItem : menuItems)
+                page[menuItem.getSlot()] = menuItem.getItemStack();
         }
+
+        menuItems.add(previousPageMI);
+        menuItems.add(nextPageMI);
+        menuItems.add(backMI);
     }
+
+    public abstract void setPaginetedMenuItems ();
 
     private ItemStack[] addPage ()
     {

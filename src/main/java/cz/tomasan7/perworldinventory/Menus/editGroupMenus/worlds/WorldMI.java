@@ -2,36 +2,41 @@ package cz.tomasan7.perworldinventory.Menus.editGroupMenus.worlds;
 
 import cz.tomasan7.perworldinventory.Menus.Menu;
 import cz.tomasan7.perworldinventory.Menus.MenuItem;
+import cz.tomasan7.perworldinventory.other.Group;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class WorldMI extends MenuItem
 {
     private static final Material iMaterial_overworld = Material.GRASS_BLOCK;
     private static final Material iMaterial_nether = Material.NETHERRACK;
     private static final Material iMaterial_end = Material.END_STONE;
-    private static final ArrayList<String> iLore = null;
+    private static final ArrayList<String> iLore = new ArrayList<>(Collections.singletonList("§7M = Remove world."));
 
-    private String world;
+    private final Group group;
+    private final String world;
 
-    public WorldMI (String name, int slot, String world)
+    public WorldMI (String name, int slot, Group group, String world)
     {
         super(name, slot);
+        this.group = group;
         this.world = world;
     }
 
     @Override
     public ItemStack getItemStack ()
     {
-        String name = world;
         Material material = getMaterial();
 
-        return Menu.createItem(name, material, iLore, 1);
+        return Menu.createItem(world, material, iLore, 1);
     }
 
     private Material getMaterial ()
@@ -62,5 +67,13 @@ public class WorldMI extends MenuItem
     @Override
     public void clickAction (InventoryClickEvent event)
     {
+        Player player = (Player) event.getWhoClicked();
+
+        if (event.getAction() == InventoryAction.CLONE_STACK)
+        {
+            //TODO: Delete ConfirmationGUI.
+            group.removeWorld(world);
+            new WorldsMenu(group).openMenu(player);
+        }
     }
 }

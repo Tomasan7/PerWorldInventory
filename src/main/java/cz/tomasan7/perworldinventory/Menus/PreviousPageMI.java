@@ -6,10 +6,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
-public class NextPageMI extends MenuItem
+public class PreviousPageMI extends MenuItem
 {
     private static final Material iMaterial = Material.ARROW;
-    private static final String iName = "Next Page";
+    private static final String iName = "Previous Page";
     private static final ArrayList<String> iLore = null;
 
     /**
@@ -17,7 +17,7 @@ public class NextPageMI extends MenuItem
      */
     private final PaginatedMenu menu;
 
-    public NextPageMI (PaginatedMenu menu, String name, int slot)
+    public PreviousPageMI (PaginatedMenu menu, String name, int slot)
     {
         super(name, slot);
         this.menu = menu;
@@ -26,7 +26,7 @@ public class NextPageMI extends MenuItem
     @Override
     public void clickAction (InventoryClickEvent event)
     {
-        menu.nextPage();
+        menu.previousPage();
     }
 
     @Override

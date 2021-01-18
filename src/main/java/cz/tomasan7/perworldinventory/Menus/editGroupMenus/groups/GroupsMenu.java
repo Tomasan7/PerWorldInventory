@@ -8,6 +8,11 @@ import java.util.List;
 
 public class GroupsMenu extends PaginatedMenu
 {
+    public GroupsMenu ()
+    {
+        super();
+    }
+
     @Override
     public String getTitle ()
     {
@@ -17,21 +22,27 @@ public class GroupsMenu extends PaginatedMenu
     @Override
     public int getSize ()
     {
-        return 18;
+        return 54;
     }
 
     @Override
     public void setMenuItems ()
     {
+        menuItems.clear();
+        menuItems.add(new CreateGroupMI("CreateGroup", getSize() - 5));
+    }
+
+    @Override
+    public void setPaginetedMenuItems ()
+    {
+        paginatedMenuItems.clear();
         List<String> groups = Group.getGroupsNames(true);
 
         for (int i = 0; i < groups.size(); i++)
         {
             GroupMI groupMI = new GroupMI(groups.get(i), i);
-            menuItems.add(groupMI);
+            paginatedMenuItems.add(groupMI);
         }
-
-        menuItems.add(new CreateGroupMI("CreateGroup", 8));
     }
 
     @Override

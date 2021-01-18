@@ -1,8 +1,10 @@
 package cz.tomasan7.perworldinventory.ResponseSystem;
 
 import cz.tomasan7.perworldinventory.Menus.Menu;
+import cz.tomasan7.perworldinventory.Menus.PaginatedMenu;
 import cz.tomasan7.perworldinventory.PerWorldInventory;
 import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.Messages;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,6 +40,13 @@ public class ResponseManager implements Listener
     {
         ResponseWaiter responseWaiter = waiters.get(player);
 
+        if (response.equals("cancel"))
+        {
+            Messages.send(player, responseWaiter.getCancelMessage());
+            waiters.remove(player);
+            return true;
+        }
+
         switch (responseWaiter.getAction())
         {
             case CreateGroup:
@@ -62,7 +71,11 @@ public class ResponseManager implements Listener
         Menu menuToOpen = responseWaiter.getMenuToOpen();
 
         if (menuToOpen != null)
+        {
+            if (menuToOpen instanceof PaginatedMenu)
+                ((PaginatedMenu) menuToOpen).Initialize();
             menuToOpen.openMenu(player);
+        }
 
         return true;
     }
