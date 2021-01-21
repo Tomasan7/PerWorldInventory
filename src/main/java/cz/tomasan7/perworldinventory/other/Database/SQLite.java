@@ -1,16 +1,20 @@
-package cz.tomasan7.perworldinventory.other;
+package cz.tomasan7.perworldinventory.other.Database;
 
 import cz.tomasan7.perworldinventory.PerWorldInventory;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
-public class SQLite extends Database
+public class SQLite implements Database
 {
-    private String fileName;
-    private boolean isMain;
+    private Connection connection;
+
+    private final String fileName;
+    private final boolean isMain;
 
     public SQLite (String fileName, boolean isMain)
     {
@@ -35,7 +39,7 @@ public class SQLite extends Database
             catch (IOException exception)
             {
                 exception.printStackTrace();
-                //TODO: plugin.getLogger().log(Level.SEVERE, "File write error: " + dbname + ".db");
+                PerWorldInventory.getInstance().getLogger().log(Level.SEVERE, "File write error: " + fileName + ".db");
             }
         }
         try
@@ -51,6 +55,43 @@ public class SQLite extends Database
         {
             exception.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean isConnected ()
+    {
+        try
+        {
+            if (connection != null && !connection.isClosed())
+                return true;
+        }
+        catch (SQLException ignored)
+        {
+        }
+
+        return false;
+    }
+
+    @Override
+    public void Disconnect ()
+    {
+        if (!isConnected())
+            return;
+
+        try
+        {
+            connection.close();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Connection getConnection ()
+    {
+        return connection;
     }
 
     @Override

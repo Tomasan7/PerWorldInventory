@@ -2,7 +2,11 @@ package cz.tomasan7.perworldinventory.Commands.SubCommands;
 
 import cz.tomasan7.perworldinventory.Commands.SubCommand;
 import cz.tomasan7.perworldinventory.PerWorldInventory;
-import cz.tomasan7.perworldinventory.other.*;
+import cz.tomasan7.perworldinventory.other.Config;
+import cz.tomasan7.perworldinventory.other.Database.MySQL;
+import cz.tomasan7.perworldinventory.other.Database.SQLite;
+import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.Messages;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;

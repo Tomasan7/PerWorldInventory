@@ -1,6 +1,8 @@
 package cz.tomasan7.perworldinventory.other;
 
 import cz.tomasan7.perworldinventory.PerWorldInventory;
+import cz.tomasan7.perworldinventory.other.Database.Database;
+import cz.tomasan7.perworldinventory.other.Database.SQLite;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -10,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -82,10 +85,12 @@ public class Group
         try
         {
             Database database = PerWorldInventory.mainDatabase;
+            Connection connection = database.getConnection();
 
-            PreparedStatement statement = database.getConnection().prepareStatement(database.rename_table("pwi_" + this.name, "pwi_" + newName));
+            PreparedStatement statement = connection.prepareStatement(database.rename_table("pwi_" + this.name, "pwi_" + newName));
             statement.executeUpdate();
             statement.close();
+            connection.close();
         }
         catch (Exception exception)
         {
@@ -159,10 +164,12 @@ public class Group
         try
         {
             Database database = PerWorldInventory.mainDatabase;
+            Connection connection = database.getConnection();
 
-            PreparedStatement statement = database.getConnection().prepareStatement(database.create_table("pwi_" + groupName));
+            PreparedStatement statement = connection.prepareStatement(database.create_table("pwi_" + groupName));
             statement.executeUpdate();
             statement.close();
+            connection.close();
         }
         catch (Exception exception)
         {
@@ -188,7 +195,10 @@ public class Group
 
         try
         {
-            PreparedStatement statement = PerWorldInventory.mainDatabase.getConnection().prepareStatement("DROP TABLE pwi_" + this.name);
+            Database database = PerWorldInventory.mainDatabase;
+            Connection connection = database.getConnection();
+
+            PreparedStatement statement = connection.prepareStatement("DROP TABLE pwi_" + this.name);
             statement.executeUpdate();
             statement.close();
         }
@@ -231,19 +241,22 @@ public class Group
 
         try
         {
-            PreparedStatement sqliteTablesStmt = sqlite.getConnection().prepareStatement("SELECT name FROM main.sqlite_master WHERE type='table'");
+            Connection mysqlConnection = mysql.getConnection();
+            Connection sqliteConnection = sqlite.getConnection();
+
+            PreparedStatement sqliteTablesStmt = sqliteConnection.prepareStatement("SELECT name FROM main.sqlite_master WHERE type='table'");
             ResultSet sqliteTablesRs = sqliteTablesStmt.executeQuery();
 
             while (sqliteTablesRs.next())
             {
                 String table = sqliteTablesRs.getString(1);
 
-                PreparedStatement sqliteRecordsStmt = sqlite.getConnection().prepareStatement("SELECT * FROM " + table);
+                PreparedStatement sqliteRecordsStmt = sqliteConnection.prepareStatement("SELECT * FROM " + table);
                 ResultSet sqliteRecordsRs = sqliteRecordsStmt.executeQuery();
 
                 while (sqliteRecordsRs.next())
                 {
-                    PreparedStatement mysqlRecordsInsertStmt = mysql.getConnection().prepareStatement(mysql.insert_player_data(table));
+                    PreparedStatement mysqlRecordsInsertStmt = mysqlConnection.prepareStatement(mysql.insert_player_data(table));
                     mysqlRecordsInsertStmt.setString(1, sqliteRecordsRs.getString("username"));
                     mysqlRecordsInsertStmt.setString(2, sqliteRecordsRs.getString("uuid"));
                     mysqlRecordsInsertStmt.setString(3, sqliteRecordsRs.getString("data"));
@@ -255,7 +268,9 @@ public class Group
 
             sqliteTablesRs.close();
             sqliteTablesStmt.close();
-            PerWorldInventory.getInstance().getLogger().info("§2Successfully saved tempdatabase to MySQL.");
+            mysqlConnection.close();
+            sqliteConnection.close();
+            PerWorldInventory.getInstance().getLogger().info("§2Successfully saved TempDatabase to MySQL.");
         }
         catch (Exception exception)
         {
@@ -474,21 +489,25 @@ public class Group
      */
     public GroupActionResult savePlayerData (Player player)
     {
-        GroupActionResult groupActionResult = null;
+        GroupActionResult groupActionResult;
+
+        //TODO: Make this ASync.
 
         try
         {
             String data = PlayerData.getPlayerData(player).Serialize();
 
             Database database = PerWorldInventory.mainDatabase;
+            Connection connection = database.getConnection();
 
-            PreparedStatement statement = database.getConnection().prepareStatement(database.insert_player_data("pwi_" + this.name));
+            PreparedStatement statement = connection.prepareStatement(database.insert_player_data("pwi_" + this.name));
             statement.setString(1, player.getName());
             statement.setString(2, player.getUniqueId().toString());
             statement.setString(3, data);
 
             statement.executeUpdate();
             statement.close();
+            connection.close();
 
             groupActionResult = new GroupActionResult(true, "Nice");
         }
@@ -510,19 +529,24 @@ public class Group
      */
     public PlayerData getPlayerData (Player player)
     {
+        PlayerData playerData = null;
+        //TODO: Make this ASync.
+
         try
         {
             Database database = PerWorldInventory.mainDatabase;
+            Connection connection = database.getConnection();
 
-            PreparedStatement statement = database.getConnection().prepareStatement(database.select_player_data_by_uuid("pwi_" + this.name));
+            PreparedStatement statement = connection.prepareStatement(database.select_player_data_by_uuid("pwi_" + this.name));
             statement.setString(1, player.getUniqueId().toString());
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next())
-                return new PlayerData(resultSet.getString("data"));
+                playerData = new PlayerData(resultSet.getString("data"));
 
             resultSet.close();
             statement.close();
+            connection.close();
         }
         catch (SQLException exception)
         {
@@ -530,7 +554,7 @@ public class Group
             databaseFail();
         }
 
-        return null;
+        return playerData;
     }
 
     /**
@@ -541,18 +565,22 @@ public class Group
      */
     public PlayerData getPlayerData (String playerName)
     {
+        PlayerData playerData = null;
+
         try
         {
             Database database = PerWorldInventory.mainDatabase;
+            Connection connection = database.getConnection();
 
-            PreparedStatement statement = database.getConnection().prepareStatement(database.select_player_data_by_name("pwi_" + this.name));
+            PreparedStatement statement = connection.prepareStatement(database.select_player_data_by_name("pwi_" + this.name));
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next())
-                return new PlayerData(resultSet.getString("data"));
+                playerData = new PlayerData(resultSet.getString("data"));
 
             resultSet.close();
             statement.close();
+            connection.close();
         }
         catch (Exception exception)
         {
@@ -560,6 +588,6 @@ public class Group
             databaseFail();
         }
 
-        return null;
+        return playerData;
     }
 }

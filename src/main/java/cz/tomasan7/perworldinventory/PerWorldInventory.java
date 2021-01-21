@@ -6,7 +6,12 @@ import cz.tomasan7.perworldinventory.Events.PlayerLeave;
 import cz.tomasan7.perworldinventory.Events.WorldSwitch;
 import cz.tomasan7.perworldinventory.Menus.MenuEvents;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseManager;
-import cz.tomasan7.perworldinventory.other.*;
+import cz.tomasan7.perworldinventory.other.Config;
+import cz.tomasan7.perworldinventory.other.Database.Database;
+import cz.tomasan7.perworldinventory.other.Database.MySQL;
+import cz.tomasan7.perworldinventory.other.Database.SQLite;
+import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.Messages;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.PreparedStatement;
