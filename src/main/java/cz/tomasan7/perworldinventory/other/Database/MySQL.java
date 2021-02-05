@@ -2,7 +2,7 @@ package cz.tomasan7.perworldinventory.other.Database;
 
 import com.zaxxer.hikari.HikariDataSource;
 import cz.tomasan7.perworldinventory.PerWorldInventory;
-import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.groups.Group;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -94,6 +94,7 @@ public class MySQL implements Database
         hikari.addDataSourceProperty("cacheServerConfiguration", true);
         hikari.addDataSourceProperty("elideSetAutoCommits", true);
         hikari.addDataSourceProperty("maintainTimeStats", true);
+        hikari.setAutoCommit(true);
     }
 
     @Override

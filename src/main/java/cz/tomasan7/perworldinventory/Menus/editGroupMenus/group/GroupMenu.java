@@ -2,7 +2,7 @@ package cz.tomasan7.perworldinventory.Menus.editGroupMenus.group;
 
 import cz.tomasan7.perworldinventory.Menus.Menu;
 import cz.tomasan7.perworldinventory.Menus.editGroupMenus.groups.GroupsMenu;
-import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.groups.Group;
 
 public class GroupMenu extends Menu
 {

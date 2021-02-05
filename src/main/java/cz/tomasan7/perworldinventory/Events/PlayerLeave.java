@@ -1,6 +1,6 @@
 package cz.tomasan7.perworldinventory.Events;
 
-import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.groups.Group;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -10,8 +10,10 @@ import cz.tomasan7.perworldinventory.other.Config;
 import cz.tomasan7.perworldinventory.other.Database.Database;
 import cz.tomasan7.perworldinventory.other.Database.MySQL;
 import cz.tomasan7.perworldinventory.other.Database.SQLite;
-import cz.tomasan7.perworldinventory.other.Group;
 import cz.tomasan7.perworldinventory.other.Messages;
+import cz.tomasan7.perworldinventory.other.groups.Group;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.PreparedStatement;
@@ -22,6 +24,8 @@ public final class PerWorldInventory extends JavaPlugin
     private static PerWorldInventory instance;
     public static Database mainDatabase;
     private static Database tempDatabase;
+
+    private static Economy economy;
 
     public PerWorldInventory ()
     {
@@ -44,6 +48,13 @@ public final class PerWorldInventory extends JavaPlugin
             mainDatabase = new SQLite("Database", true);
 
         mainDatabase.Connect(15);
+
+        if (!setupEconomy())
+        {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
     }
 
     @Override
@@ -97,6 +108,26 @@ public final class PerWorldInventory extends JavaPlugin
         }
 
         return tempDatabase;
+    }
+
+    private boolean setupEconomy ()
+    {
+        if (getServer().getPluginManager().getPlugin("Vault") == null)
+        {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null)
+        {
+            return false;
+        }
+        economy = rsp.getProvider();
+        return economy != null;
+    }
+
+    public static Economy getEconomy ()
+    {
+        return economy;
     }
 
     public static PerWorldInventory getInstance ()

@@ -1,7 +1,7 @@
 package cz.tomasan7.perworldinventory.ResponseSystem;
 
 import cz.tomasan7.perworldinventory.Menus.Menu;
-import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.groups.Group;
 
 public class ResponseWaiter
 {

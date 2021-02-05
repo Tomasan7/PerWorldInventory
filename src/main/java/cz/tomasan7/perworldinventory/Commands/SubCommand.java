@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface SubCommand
 {
-    public String getName ();
+    String getName ();
 
-    public String getDescription ();
+    String getDescription ();
 
-    public String getSyntax ();
+    String getSyntax ();
 
-    public String getPermission ();
+    String getPermission ();
 
-    public List<String> getTabCompletion (int index, String[] args);
+    List<String> getTabCompletion (int index, String[] args);
 
-    public void perform (CommandSender sender, String[] args);
+    void perform (CommandSender sender, String[] args);
 }

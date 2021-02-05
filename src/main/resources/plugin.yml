@@ -5,6 +5,7 @@ api-version: 1.16
 prefix: PerWorldInventory
 authors: [Toasan7]
 description: Plugin to have seperate inventories in different worlds.
+depend: [ Vault ]
 commands:
   perworldinventory:
     aliases: [pwi]

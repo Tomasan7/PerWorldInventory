@@ -1,8 +1,12 @@
-package cz.tomasan7.perworldinventory.other;
+package cz.tomasan7.perworldinventory.other.groups;
 
 import cz.tomasan7.perworldinventory.PerWorldInventory;
 import cz.tomasan7.perworldinventory.other.Database.Database;
 import cz.tomasan7.perworldinventory.other.Database.SQLite;
+import cz.tomasan7.perworldinventory.other.GroupActionResult;
+import cz.tomasan7.perworldinventory.other.Messages;
+import cz.tomasan7.perworldinventory.other.SavedData;
+import cz.tomasan7.perworldinventory.other.playerData.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -487,27 +491,28 @@ public class Group
      *
      * @param player Player, whose data to save.
      */
-    public GroupActionResult savePlayerData (Player player)
+    public void savePlayerData (Player player)
+    {
+        new SavePlayerDataRunnable(this.name, player, PlayerData.getPlayerData(player)).runTaskAsynchronously(PerWorldInventory.getInstance());
+    }
+
+    /*public GroupActionResult savePlayerData (Player player)
     {
         GroupActionResult groupActionResult;
 
-        //TODO: Make this ASync.
+        Database database = PerWorldInventory.mainDatabase;
+        String sql = database.insert_player_data("pwi_" + this.name);
 
-        try
+        String data = PlayerData.getPlayerData(player).Serialize();
+
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql))
         {
-            String data = PlayerData.getPlayerData(player).Serialize();
-
-            Database database = PerWorldInventory.mainDatabase;
-            Connection connection = database.getConnection();
-
-            PreparedStatement statement = connection.prepareStatement(database.insert_player_data("pwi_" + this.name));
             statement.setString(1, player.getName());
             statement.setString(2, player.getUniqueId().toString());
             statement.setString(3, data);
 
             statement.executeUpdate();
-            statement.close();
-            connection.close();
 
             groupActionResult = new GroupActionResult(true, "Nice");
         }
@@ -519,7 +524,7 @@ public class Group
         }
 
         return groupActionResult;
-    }
+    }*/
 
     /**
      * Get data of player, saved in this group.
@@ -529,24 +534,22 @@ public class Group
      */
     public PlayerData getPlayerData (Player player)
     {
-        PlayerData playerData = null;
         //TODO: Make this ASync.
+        PlayerData playerData = null;
 
-        try
+        Database database = PerWorldInventory.mainDatabase;
+        String sql = database.select_player_data_by_uuid("pwi_" + this.name);
+
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql))
         {
-            Database database = PerWorldInventory.mainDatabase;
-            Connection connection = database.getConnection();
-
-            PreparedStatement statement = connection.prepareStatement(database.select_player_data_by_uuid("pwi_" + this.name));
             statement.setString(1, player.getUniqueId().toString());
-            ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next())
-                playerData = new PlayerData(resultSet.getString("data"));
-
-            resultSet.close();
-            statement.close();
-            connection.close();
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                if (resultSet.next())
+                    playerData = new PlayerData(resultSet.getString("data"));
+            }
         }
         catch (SQLException exception)
         {
@@ -565,22 +568,22 @@ public class Group
      */
     public PlayerData getPlayerData (String playerName)
     {
+        //TODO: Make this ASync.
         PlayerData playerData = null;
 
-        try
+        Database database = PerWorldInventory.mainDatabase;
+        final String sql = database.select_player_data_by_name("pwi_" + this.name);
+
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql))
         {
-            Database database = PerWorldInventory.mainDatabase;
-            Connection connection = database.getConnection();
+            statement.setString(1, playerName);
 
-            PreparedStatement statement = connection.prepareStatement(database.select_player_data_by_name("pwi_" + this.name));
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next())
-                playerData = new PlayerData(resultSet.getString("data"));
-
-            resultSet.close();
-            statement.close();
-            connection.close();
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                if (resultSet.next())
+                    playerData = new PlayerData(resultSet.getString("data"));
+            }
         }
         catch (Exception exception)
         {

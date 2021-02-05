@@ -1,7 +1,7 @@
 /*package cz.tomasan7.perworldinventory.menus;
 
 import cz.tomasan7.perworldinventory.menus.menus.groups.GroupMI;
-import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.groups.Group;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;

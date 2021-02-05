@@ -1,7 +1,7 @@
 package cz.tomasan7.perworldinventory.Events;
 
-import cz.tomasan7.perworldinventory.other.Group;
-import cz.tomasan7.perworldinventory.other.PlayerData;
+import cz.tomasan7.perworldinventory.other.groups.Group;
+import cz.tomasan7.perworldinventory.other.playerData.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,8 +21,7 @@ public class WorldSwitch implements Listener
         if (fromGroup.equals(toGroup))
             return;
 
-        if (!fromGroup.savePlayerData(player).successful)
-            event.setCancelled(true);
+        fromGroup.savePlayerData(player);
 
         PlayerData playerData = toGroup.getPlayerData(player);
 

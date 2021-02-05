@@ -3,7 +3,7 @@ package cz.tomasan7.perworldinventory.Menus.editGroupMenus.worlds;
 import cz.tomasan7.perworldinventory.Menus.Menu;
 import cz.tomasan7.perworldinventory.Menus.PaginatedMenu;
 import cz.tomasan7.perworldinventory.Menus.editGroupMenus.group.GroupMenu;
-import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.groups.Group;
 
 import java.util.List;
 

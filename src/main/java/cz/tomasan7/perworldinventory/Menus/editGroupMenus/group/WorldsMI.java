@@ -3,7 +3,7 @@ package cz.tomasan7.perworldinventory.Menus.editGroupMenus.group;
 import cz.tomasan7.perworldinventory.Menus.Menu;
 import cz.tomasan7.perworldinventory.Menus.MenuItem;
 import cz.tomasan7.perworldinventory.Menus.editGroupMenus.worlds.WorldsMenu;
-import cz.tomasan7.perworldinventory.other.Group;
+import cz.tomasan7.perworldinventory.other.groups.Group;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

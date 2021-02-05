@@ -2,9 +2,9 @@ package cz.tomasan7.perworldinventory.Commands.SubCommands;
 
 
 import cz.tomasan7.perworldinventory.Commands.SubCommand;
-import cz.tomasan7.perworldinventory.other.Group;
 import cz.tomasan7.perworldinventory.other.GroupActionResult;
 import cz.tomasan7.perworldinventory.other.Messages;
+import cz.tomasan7.perworldinventory.other.groups.Group;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
