@@ -1,12 +1,10 @@
 package cz.tomasan7.perworldinventory.ResponseSystem;
 
 import cz.tomasan7.perworldinventory.Menus.Menu;
-import cz.tomasan7.perworldinventory.other.groups.Group;
 
 public class ResponseWaiter
 {
-    private final ResponseGroupAction action;
-    private final Group group;
+    private final ResponseAction action;
     private final Menu menuToOpen;
 
     private int time;
@@ -16,29 +14,23 @@ public class ResponseWaiter
     public static String default_cancel_message = "§eYour request has been cancelled.";
     public static int default_timeout_time = 30;
 
-    public ResponseWaiter (ResponseGroupAction action, Group group, Menu menuToOpen, int timeoutTime, String timeoutMessage, String cancelMessage)
+    public ResponseWaiter (ResponseAction action, Menu menuToOpen, int timeoutTime, String timeoutMessage, String cancelMessage)
     {
         this.action = action;
-        this.group = group;
         this.menuToOpen = menuToOpen;
         this.time = timeoutTime;
         this.timeoutMessage = timeoutMessage;
         this.cancelMessage = cancelMessage;
     }
 
-    public ResponseWaiter (ResponseGroupAction action, Group group, Menu menuToOpen)
+    public ResponseWaiter (ResponseAction action, Menu menuToOpen)
     {
-        this(action, group, menuToOpen, default_timeout_time, default_timeout_message, default_cancel_message);
+        this(action, menuToOpen, default_timeout_time, default_timeout_message, default_cancel_message);
     }
 
-    public ResponseGroupAction getAction ()
+    public ResponseAction getAction ()
     {
         return action;
-    }
-
-    public Group getGroup ()
-    {
-        return group;
     }
 
     public Menu getMenuToOpen ()

@@ -19,7 +19,7 @@ public class WorldMI extends MenuItem
     private static final Material iMaterial_overworld = Material.GRASS_BLOCK;
     private static final Material iMaterial_nether = Material.NETHERRACK;
     private static final Material iMaterial_end = Material.END_STONE;
-    private static final ArrayList<String> iLore = new ArrayList<>(Collections.singletonList("§7M = Remove world."));
+    private static final ArrayList<String> iLore = new ArrayList<>(Collections.singletonList("§7MMB = Remove world."));
 
     private final Group group;
     private final String world;

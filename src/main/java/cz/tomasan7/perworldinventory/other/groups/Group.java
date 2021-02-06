@@ -1,11 +1,11 @@
 package cz.tomasan7.perworldinventory.other.groups;
 
 import cz.tomasan7.perworldinventory.PerWorldInventory;
-import cz.tomasan7.perworldinventory.other.Database.Database;
-import cz.tomasan7.perworldinventory.other.Database.SQLite;
 import cz.tomasan7.perworldinventory.other.GroupActionResult;
 import cz.tomasan7.perworldinventory.other.Messages;
 import cz.tomasan7.perworldinventory.other.SavedData;
+import cz.tomasan7.perworldinventory.other.database.Database;
+import cz.tomasan7.perworldinventory.other.database.SQLite;
 import cz.tomasan7.perworldinventory.other.playerData.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

@@ -13,7 +13,7 @@ public class WorldsMenu extends PaginatedMenu
 
     public WorldsMenu (Group group)
     {
-        super();
+        super(false);
         this.group = group;
     }
 

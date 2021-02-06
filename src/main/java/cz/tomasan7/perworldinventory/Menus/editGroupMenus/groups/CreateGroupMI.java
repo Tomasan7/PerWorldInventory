@@ -2,10 +2,11 @@ package cz.tomasan7.perworldinventory.Menus.editGroupMenus.groups;
 
 import cz.tomasan7.perworldinventory.Menus.Menu;
 import cz.tomasan7.perworldinventory.Menus.MenuItem;
-import cz.tomasan7.perworldinventory.ResponseSystem.ResponseGroupAction;
+import cz.tomasan7.perworldinventory.ResponseSystem.ResponseAction;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseManager;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseWaiter;
 import cz.tomasan7.perworldinventory.other.Messages;
+import cz.tomasan7.perworldinventory.other.groups.Group;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -35,7 +36,9 @@ public class CreateGroupMI extends MenuItem
     {
         Player player = (Player) event.getWhoClicked();
 
-        ResponseWaiter responseWaiter = new ResponseWaiter(ResponseGroupAction.CreateGroup, null, new GroupsMenu());
+        ResponseAction action = response -> Group.createGroup(response).message;
+
+        ResponseWaiter responseWaiter = new ResponseWaiter(action, new GroupsMenu());
 
         ResponseManager.AddWaiter(player, responseWaiter);
         player.closeInventory();

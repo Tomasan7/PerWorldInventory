@@ -3,9 +3,9 @@ package cz.tomasan7.perworldinventory.Commands.SubCommands;
 import cz.tomasan7.perworldinventory.Commands.SubCommand;
 import cz.tomasan7.perworldinventory.PerWorldInventory;
 import cz.tomasan7.perworldinventory.other.Config;
-import cz.tomasan7.perworldinventory.other.Database.MySQL;
-import cz.tomasan7.perworldinventory.other.Database.SQLite;
 import cz.tomasan7.perworldinventory.other.Messages;
+import cz.tomasan7.perworldinventory.other.database.MySQL;
+import cz.tomasan7.perworldinventory.other.database.SQLite;
 import cz.tomasan7.perworldinventory.other.groups.Group;
 import org.bukkit.command.CommandSender;
 

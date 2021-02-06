@@ -1,7 +1,7 @@
 package cz.tomasan7.perworldinventory.other.groups;
 
 import cz.tomasan7.perworldinventory.PerWorldInventory;
-import cz.tomasan7.perworldinventory.other.Database.Database;
+import cz.tomasan7.perworldinventory.other.database.Database;
 import cz.tomasan7.perworldinventory.other.playerData.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;

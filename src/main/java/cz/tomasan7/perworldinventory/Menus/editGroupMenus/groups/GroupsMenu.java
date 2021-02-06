@@ -10,7 +10,7 @@ public class GroupsMenu extends PaginatedMenu
 {
     public GroupsMenu ()
     {
-        super();
+        super(false);
     }
 
     @Override
@@ -22,7 +22,7 @@ public class GroupsMenu extends PaginatedMenu
     @Override
     public int getSize ()
     {
-        return 54;
+        return 18;
     }
 
     @Override

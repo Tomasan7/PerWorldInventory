@@ -3,7 +3,7 @@ package cz.tomasan7.perworldinventory.Menus.editGroupMenus.groups;
 import cz.tomasan7.perworldinventory.Menus.Menu;
 import cz.tomasan7.perworldinventory.Menus.MenuItem;
 import cz.tomasan7.perworldinventory.Menus.editGroupMenus.group.GroupMenu;
-import cz.tomasan7.perworldinventory.ResponseSystem.ResponseGroupAction;
+import cz.tomasan7.perworldinventory.ResponseSystem.ResponseAction;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseManager;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseWaiter;
 import cz.tomasan7.perworldinventory.other.Messages;
@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class GroupMI extends MenuItem
 {
     private static final Material iMaterial = Material.PAPER;
-    private static final ArrayList<String> iLore = new ArrayList<>(Arrays.asList("§7L = Edit group.", "§7R = Rename group.", "§7M = Delete group."));
+    private static final ArrayList<String> iLore = new ArrayList<>(Arrays.asList("§7LMB = Edit group.", "§7RMB = Rename group.", "§7MMB = Delete group."));
 
     private Group group;
 
@@ -47,7 +47,8 @@ public class GroupMI extends MenuItem
                 break;
 
             case PICKUP_HALF:
-                ResponseManager.AddWaiter(player, new ResponseWaiter(ResponseGroupAction.RenameGroup, group, new GroupsMenu()));
+                ResponseAction action = response -> group.setName(response).message;
+                ResponseManager.AddWaiter(player, new ResponseWaiter(action, new GroupsMenu()));
                 Messages.send(player, "§eEnter new name for the group.");
                 player.closeInventory();
                 break;

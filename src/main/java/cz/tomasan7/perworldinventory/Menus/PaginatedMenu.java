@@ -10,40 +10,38 @@ import java.util.List;
 
 public abstract class PaginatedMenu extends Menu
 {
-    public static ItemStack bottom_line_fill_item;
+    public static final ItemStack bottom_line_fill_item;
+    private static final String page_suffix = " (page %s)";
 
     static
     {
         bottom_line_fill_item = createItem(" ", Material.BLACK_STAINED_GLASS_PANE, null, 1);
     }
 
-    private Inventory inventory;
     protected List<MenuItem> paginatedMenuItems;
-    private List<ItemStack[]> pages;
+    private List<Inventory> pages;
+    private boolean isAdaptive;
+
     private int currentPage;
 
-    public PaginatedMenu ()
+    public PaginatedMenu (boolean isAdaptive)
     {
         super();
+        this.isAdaptive = isAdaptive;
     }
 
     @Override
     public Inventory getInventory ()
     {
         Initialize();
-        inventory.setContents(pages.get(0));
-        return inventory;
+        return pages.get(currentPage);
     }
 
     public void Initialize ()
     {
-
-        this.pages = new ArrayList<ItemStack[]>();
-        this.paginatedMenuItems = new ArrayList<MenuItem>();
-        inventory = Bukkit.createInventory(this, getSize(), getTitle());
+        pages = new ArrayList<Inventory>();
+        paginatedMenuItems = new ArrayList<MenuItem>();
         currentPage = 0;
-
-        pages.clear();
 
         setMenuItems();
         setPaginetedMenuItems();
@@ -64,31 +62,31 @@ public abstract class PaginatedMenu extends Menu
 
         for (int pageI = 0; pageI < pagesCount; pageI++)
         {
-            ItemStack[] page = addPage();
+            Inventory page = addPage();
 
-            for (int slot = 0; slot < page.length; slot++)
+            for (int slot = 0; slot < page.getSize(); slot++)
             {
-                if (slot >= page.length - ROW_SIZE)
-                    page[slot] = bottom_line_fill_item;
+                if (slot >= page.getSize() - ROW_SIZE)
+                    page.setItem(slot, bottom_line_fill_item);
                 else
                 {
                     if (paginatedMenuItemCursor != paginatedMenuItems.size())
-                        page[slot] = paginatedMenuItems.get(paginatedMenuItemCursor++).getItemStack();
+                        page.setItem(slot, paginatedMenuItems.get(paginatedMenuItemCursor++).getItemStack());
                     else
-                        page[slot] = fill_item;
+                        page.setItem(slot, fill_item);
                 }
             }
 
             if (pageI != 0)
-                page[previousPageMI.getSlot()] = previousPageMI.getItemStack();
+                page.setItem(previousPageMI.getSlot(), previousPageMI.getItemStack());
 
             if (pageI == pagesCount - 2)
-                page[nextPageMI.getSlot()] = previousPageMI.getItemStack();
+                page.setItem(nextPageMI.getSlot(), nextPageMI.getItemStack());
 
-            page[backMI.getSlot()] = backMI.getItemStack();
+            page.setItem(backMI.getSlot(), backMI.getItemStack());
 
             for (MenuItem menuItem : menuItems)
-                page[menuItem.getSlot()] = menuItem.getItemStack();
+                page.setItem(menuItem.getSlot(), menuItem.getItemStack());
         }
 
         menuItems.add(previousPageMI);
@@ -98,14 +96,14 @@ public abstract class PaginatedMenu extends Menu
 
     public abstract void setPaginetedMenuItems ();
 
-    private ItemStack[] addPage ()
+    private Inventory addPage ()
     {
-        ItemStack[] page = new ItemStack[getSize()];
-        pages.add(page);
-        return page;
+        Inventory inventory = Bukkit.createInventory(this, getSize(), getTitle() + String.format(page_suffix, pages.size() + 1));
+        pages.add(inventory);
+        return inventory;
     }
 
-    public ItemStack[] getPage (int page)
+    public Inventory getPage (int page)
     {
         return pages.get(page);
     }
@@ -116,7 +114,8 @@ public abstract class PaginatedMenu extends Menu
             return;
 
         currentPage++;
-        inventory.setContents(getPage(currentPage));
+
+        pages.get(currentPage - 1).getViewers().get(0).openInventory(pages.get(currentPage));
     }
 
     public void previousPage ()
@@ -125,6 +124,7 @@ public abstract class PaginatedMenu extends Menu
             return;
 
         currentPage--;
-        inventory.setContents(getPage(currentPage));
+
+        pages.get(currentPage + 1).getViewers().get(0).openInventory(pages.get(currentPage));
     }
 }

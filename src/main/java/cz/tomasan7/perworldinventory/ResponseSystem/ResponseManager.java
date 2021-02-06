@@ -4,7 +4,6 @@ import cz.tomasan7.perworldinventory.Menus.Menu;
 import cz.tomasan7.perworldinventory.Menus.PaginatedMenu;
 import cz.tomasan7.perworldinventory.PerWorldInventory;
 import cz.tomasan7.perworldinventory.other.Messages;
-import cz.tomasan7.perworldinventory.other.groups.Group;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,24 +46,7 @@ public class ResponseManager implements Listener
             return true;
         }
 
-        switch (responseWaiter.getAction())
-        {
-            case CreateGroup:
-                player.sendMessage(Group.createGroup(response).message);
-                break;
-            case RenameGroup:
-                player.sendMessage(responseWaiter.getGroup().setName(response).message);
-                break;
-            case DeleteGroup:
-                player.sendMessage(responseWaiter.getGroup().Delete().message);
-                break;
-            case AddWorld:
-                player.sendMessage(responseWaiter.getGroup().addWorld(response).message);
-                break;
-            case RemoveWorld:
-                player.sendMessage(responseWaiter.getGroup().removeWorld(response).message);
-                break;
-        }
+        player.sendMessage(responseWaiter.getAction().perform(response));
 
         waiters.remove(player);
 

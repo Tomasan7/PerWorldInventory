@@ -1,4 +1,4 @@
-package cz.tomasan7.perworldinventory.other.Database;
+package cz.tomasan7.perworldinventory.other.database;
 
 import cz.tomasan7.perworldinventory.PerWorldInventory;
 

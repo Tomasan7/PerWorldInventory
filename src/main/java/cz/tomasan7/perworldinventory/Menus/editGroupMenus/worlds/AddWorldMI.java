@@ -2,7 +2,7 @@ package cz.tomasan7.perworldinventory.Menus.editGroupMenus.worlds;
 
 import cz.tomasan7.perworldinventory.Menus.Menu;
 import cz.tomasan7.perworldinventory.Menus.MenuItem;
-import cz.tomasan7.perworldinventory.ResponseSystem.ResponseGroupAction;
+import cz.tomasan7.perworldinventory.ResponseSystem.ResponseAction;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseManager;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseWaiter;
 import cz.tomasan7.perworldinventory.other.Messages;
@@ -39,7 +39,9 @@ public class AddWorldMI extends MenuItem
     {
         Player player = (Player) event.getWhoClicked();
 
-        ResponseWaiter responseWaiter = new ResponseWaiter(ResponseGroupAction.AddWorld, group, new WorldsMenu(group));
+        ResponseAction action = response -> group.addWorld(response).message;
+
+        ResponseWaiter responseWaiter = new ResponseWaiter(action, new WorldsMenu(group));
 
         ResponseManager.AddWaiter(player, responseWaiter);
         player.closeInventory();
