@@ -1,8 +1,7 @@
 package cz.tomasan7.perworldinventory.ResponseSystem;
 
-import cz.tomasan7.perworldinventory.Menus.Menu;
-import cz.tomasan7.perworldinventory.Menus.PaginatedMenu;
 import cz.tomasan7.perworldinventory.PerWorldInventory;
+import cz.tomasan7.perworldinventory.menus.Menu;
 import cz.tomasan7.perworldinventory.other.Messages;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,8 +53,8 @@ public class ResponseManager implements Listener
 
         if (menuToOpen != null)
         {
-            if (menuToOpen instanceof PaginatedMenu)
-                ((PaginatedMenu) menuToOpen).Initialize();
+            //if (menuToOpen instanceof PaginatedMenu)
+            menuToOpen.Setup();
             menuToOpen.openMenu(player);
         }
 

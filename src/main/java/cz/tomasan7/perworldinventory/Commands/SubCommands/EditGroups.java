@@ -1,7 +1,7 @@
 package cz.tomasan7.perworldinventory.Commands.SubCommands;
 
 import cz.tomasan7.perworldinventory.Commands.SubCommand;
-import cz.tomasan7.perworldinventory.Menus.editGroupMenus.groups.GroupsMenu;
+import cz.tomasan7.perworldinventory.menus.editGroupMenus.groups.GroupsMenu;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

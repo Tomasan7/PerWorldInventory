@@ -1,17 +1,17 @@
 package cz.tomasan7.perworldinventory;
 
 import cz.tomasan7.perworldinventory.Commands.PerWorldInventoryCmd;
-import cz.tomasan7.perworldinventory.Events.PlayerJoin;
-import cz.tomasan7.perworldinventory.Events.PlayerLeave;
-import cz.tomasan7.perworldinventory.Events.WorldSwitch;
-import cz.tomasan7.perworldinventory.Menus.MenuEvents;
 import cz.tomasan7.perworldinventory.ResponseSystem.ResponseManager;
+import cz.tomasan7.perworldinventory.database.Database;
+import cz.tomasan7.perworldinventory.database.MySQL;
+import cz.tomasan7.perworldinventory.database.SQLite;
+import cz.tomasan7.perworldinventory.events.PlayerJoin;
+import cz.tomasan7.perworldinventory.events.PlayerLeave;
+import cz.tomasan7.perworldinventory.events.WorldSwitch;
+import cz.tomasan7.perworldinventory.groups.Group;
+import cz.tomasan7.perworldinventory.menus.MenuEvents;
 import cz.tomasan7.perworldinventory.other.Config;
 import cz.tomasan7.perworldinventory.other.Messages;
-import cz.tomasan7.perworldinventory.other.database.Database;
-import cz.tomasan7.perworldinventory.other.database.MySQL;
-import cz.tomasan7.perworldinventory.other.database.SQLite;
-import cz.tomasan7.perworldinventory.other.groups.Group;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
