@@ -51,14 +51,14 @@ public class Reload implements SubCommand
         Group.saveGroups();
         Group.loadGroups();
 
-        PerWorldInventory.mainDatabase.Disconnect();
+        PerWorldInventory.getMainDatabase().disconnect();
 
         if (Config.useMysql)
-            PerWorldInventory.mainDatabase = new MySQL(Config.getConfig().getConfigurationSection("MySQL"));
+            PerWorldInventory.setMainDatabase(new MySQL(Config.getConfig().getConfigurationSection("MySQL")));
         else
-            PerWorldInventory.mainDatabase = new SQLite("Database", true);
+            PerWorldInventory.setMainDatabase(new SQLite("Database", true));
 
-        PerWorldInventory.mainDatabase.Connect(15);
+        PerWorldInventory.getMainDatabase().connect();
 
         PerWorldInventory.getInstance().getLogger().info("§2Configuration and Groups reloaded by " + sender.getName() + "§2.");
         Messages.send(sender, "§2Configuration and Groups reloaded.");

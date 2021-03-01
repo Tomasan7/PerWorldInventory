@@ -19,7 +19,7 @@ public class ResponseManager implements Listener
 
     static
     {
-        waiters = new HashMap<Player, ResponseWaiter>();
+        waiters = new HashMap<>();
         waitersRunnable = null;
     }
 
@@ -38,6 +38,9 @@ public class ResponseManager implements Listener
     {
         ResponseWaiter responseWaiter = waiters.get(player);
 
+        if (responseWaiter == null)
+            return false;
+
         if (response.equals("cancel"))
         {
             Messages.send(player, responseWaiter.getCancelMessage());
@@ -45,7 +48,7 @@ public class ResponseManager implements Listener
             return true;
         }
 
-        player.sendMessage(responseWaiter.getAction().perform(response));
+        player.sendMessage(responseWaiter.getAction().apply(response));
 
         waiters.remove(player);
 
@@ -75,7 +78,7 @@ public class ResponseManager implements Listener
         {
             return !runnable.isCancelled();
         }
-        catch (Exception exception)
+        catch (IllegalStateException exception)
         {
             return false;
         }
@@ -87,7 +90,6 @@ public class ResponseManager implements Listener
         Player player = event.getPlayer();
         String message = event.getMessage();
 
-        if (ResponseManager.isWaited(player))
-            event.setCancelled(ResponseManager.processResponse(player, message));
+        event.setCancelled(ResponseManager.processResponse(player, message));
     }
 }

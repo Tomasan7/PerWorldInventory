@@ -2,9 +2,11 @@ package cz.tomasan7.perworldinventory.ResponseSystem;
 
 import cz.tomasan7.perworldinventory.menus.Menu;
 
+import java.util.function.UnaryOperator;
+
 public class ResponseWaiter
 {
-    private final ResponseAction action;
+    private final UnaryOperator<String> action;
     private final Menu menuToOpen;
 
     private int time;
@@ -14,7 +16,7 @@ public class ResponseWaiter
     public static String default_cancel_message = "§eYour request has been cancelled.";
     public static int default_timeout_time = 30;
 
-    public ResponseWaiter (ResponseAction action, Menu menuToOpen, int timeoutTime, String timeoutMessage, String cancelMessage)
+    public ResponseWaiter (UnaryOperator<String> action, Menu menuToOpen, int timeoutTime, String timeoutMessage, String cancelMessage)
     {
         this.action = action;
         this.menuToOpen = menuToOpen;
@@ -23,12 +25,12 @@ public class ResponseWaiter
         this.cancelMessage = cancelMessage;
     }
 
-    public ResponseWaiter (ResponseAction action, Menu menuToOpen)
+    public ResponseWaiter (UnaryOperator<String> action, Menu menuToOpen)
     {
         this(action, menuToOpen, default_timeout_time, default_timeout_message, default_cancel_message);
     }
 
-    public ResponseAction getAction ()
+    public UnaryOperator<String> getAction ()
     {
         return action;
     }

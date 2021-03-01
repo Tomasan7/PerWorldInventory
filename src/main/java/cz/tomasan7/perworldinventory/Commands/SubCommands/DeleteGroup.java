@@ -69,7 +69,7 @@ public class DeleteGroup implements SubCommand
             return;
         }
 
-        GroupActionResult result = group.Delete();
+        GroupActionResult result = group.delete();
         Messages.send(sender, result.message);
     }
 }

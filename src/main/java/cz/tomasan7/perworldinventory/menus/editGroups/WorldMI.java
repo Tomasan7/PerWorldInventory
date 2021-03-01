@@ -1,4 +1,4 @@
-package cz.tomasan7.perworldinventory.menus.editGroupMenus.worlds;
+package cz.tomasan7.perworldinventory.menus.editGroups;
 
 import cz.tomasan7.perworldinventory.groups.Group;
 import cz.tomasan7.perworldinventory.menus.Menu;
@@ -24,9 +24,9 @@ public class WorldMI extends MenuItem
     private final Group group;
     private final String world;
 
-    public WorldMI (String name, int slot, Menu holder, Group group, String world)
+    public WorldMI (String displayName, Menu holder, Group group, String world)
     {
-        super(name, slot, holder);
+        super(Material.GRASS_BLOCK, displayName, holder);
         this.group = group;
         this.world = world;
     }
@@ -36,7 +36,7 @@ public class WorldMI extends MenuItem
     {
         Material material = getMaterial();
 
-        return Menu.createItem(world, material, iLore, 1);
+        return Menu.createItem(material, world, iLore, 1);
     }
 
     private Material getMaterial ()
@@ -65,7 +65,7 @@ public class WorldMI extends MenuItem
     }
 
     @Override
-    public void clickAction (InventoryClickEvent event)
+    public void ClickAction (InventoryClickEvent event)
     {
         Player player = (Player) event.getWhoClicked();
 

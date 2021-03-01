@@ -5,17 +5,19 @@ import java.sql.SQLException;
 
 public interface Database
 {
+    String TABLE_PREFIX = "pwi_";
+
     Connection getConnection () throws SQLException;
 
-    void Connect (int reconnectAttemptDelay);
+    void connect ();
 
-    boolean isConnected ();
-
-    void Disconnect ();
+    void disconnect ();
 
     String create_table (String tableName);
 
     String rename_table (String tableName, String toName);
+
+    String delete_table (String tableName);
 
     String insert_player_data (String tableName);
 

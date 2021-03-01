@@ -12,6 +12,7 @@ import cz.tomasan7.perworldinventory.groups.Group;
 import cz.tomasan7.perworldinventory.menus.MenuEvents;
 import cz.tomasan7.perworldinventory.other.Config;
 import cz.tomasan7.perworldinventory.other.Messages;
+import cz.tomasan7.perworldinventory.other.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,8 +23,9 @@ import java.sql.SQLException;
 public final class PerWorldInventory extends JavaPlugin
 {
     private static PerWorldInventory instance;
-    public static Database mainDatabase;
+    private static Database mainDatabase;
     private static Database tempDatabase;
+    public static final String tempDatabaseFileName = "TempDatabase";
 
     private static Economy economy;
 
@@ -47,7 +49,10 @@ public final class PerWorldInventory extends JavaPlugin
         else
             mainDatabase = new SQLite("Database", true);
 
-        mainDatabase.Connect(15);
+        mainDatabase.connect();
+        Group.loadGroups();
+        if (mainDatabase instanceof MySQL)
+            Group.checkForTempDatabase();
 
         if (!setupEconomy())
         {
@@ -60,7 +65,8 @@ public final class PerWorldInventory extends JavaPlugin
     @Override
     public void onDisable ()
     {
-        mainDatabase.Disconnect();
+        mainDatabase.disconnect();
+        Utils.kickAllPlayers(Messages.server_shutdown_kick);
         Group.saveGroups();
     }
 
@@ -77,7 +83,7 @@ public final class PerWorldInventory extends JavaPlugin
         //#endregion
     }
 
-    public static void DatabaseConnected(boolean isMysql)
+    public static void DatabaseConnected (boolean isMysql)
     {
         Group.loadGroups();
 
@@ -85,13 +91,23 @@ public final class PerWorldInventory extends JavaPlugin
             Group.checkForTempDatabase();
     }
 
+    public static Database getMainDatabase ()
+    {
+        return mainDatabase;
+    }
+
+    public static void setMainDatabase (Database mainDatabase)
+    {
+        PerWorldInventory.mainDatabase = mainDatabase;
+    }
+
     public static Database getTempDatabase ()
     {
-        if (tempDatabase != null && tempDatabase.isConnected())
+        if (tempDatabase != null)
             return tempDatabase;
 
-        tempDatabase = new SQLite("TempDatabase", false);
-        tempDatabase.Connect(0);
+        tempDatabase = new SQLite(tempDatabaseFileName, false);
+        tempDatabase.connect();
 
         for (String group : Group.getGroupsNames(true))
         {

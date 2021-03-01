@@ -8,6 +8,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class SavePlayerDataRunnable extends BukkitRunnable
 {
@@ -25,8 +26,8 @@ public class SavePlayerDataRunnable extends BukkitRunnable
     @Override
     public void run ()
     {
-        Database database = PerWorldInventory.mainDatabase;
-        String sql = database.insert_player_data("pwi_" + groupName);
+        Database database = PerWorldInventory.getMainDatabase();
+        String sql = database.insert_player_data(groupName);
 
         String data = playerData.Serialize();
 
@@ -39,7 +40,7 @@ public class SavePlayerDataRunnable extends BukkitRunnable
 
             statement.executeUpdate();
         }
-        catch (Exception exception)
+        catch (SQLException exception)
         {
             exception.printStackTrace();
             Group.databaseFail();

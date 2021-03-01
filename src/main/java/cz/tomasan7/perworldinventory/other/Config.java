@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class Config
 {
     public static boolean useMysql;
+    public static long connectionTimeout;
 
     private static final PerWorldInventory plugin;
     private static FileConfiguration config;
@@ -23,9 +24,11 @@ public class Config
     public static void loadConfig ()
     {
         plugin.saveDefaultConfig();
-
         config = plugin.getConfig();
+
         useMysql = config.getBoolean("useMySQL");
+        connectionTimeout = config.getLong("MySQL.connectionTimeout");
+
     }
 
     public static void reloadConfig ()

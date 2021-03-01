@@ -3,8 +3,8 @@ package cz.tomasan7.perworldinventory.groups;
 import cz.tomasan7.perworldinventory.PerWorldInventory;
 import cz.tomasan7.perworldinventory.database.Database;
 import cz.tomasan7.perworldinventory.database.SQLite;
-import cz.tomasan7.perworldinventory.other.GroupActionResult;
-import cz.tomasan7.perworldinventory.other.Messages;
+import cz.tomasan7.perworldinventory.other.Error;
+import cz.tomasan7.perworldinventory.other.*;
 import cz.tomasan7.perworldinventory.playerData.PlayerData;
 import cz.tomasan7.perworldinventory.savedData.SavedData;
 import org.bukkit.Bukkit;
@@ -25,9 +25,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Group
 {
+    private static final String GROUPS_FILE_NAME = "groups";
+
     static
     {
         groups = new HashSet<>();
@@ -89,24 +93,20 @@ public class Group
         if (Group.getGroup(newName) != null)
             return new GroupActionResult(false, "§cGroup §l" + newName + " §calready exists.");
 
-        try
-        {
-            Database database = PerWorldInventory.mainDatabase;
-            Connection connection = database.getConnection();
+        Database database = PerWorldInventory.getMainDatabase();
 
-            PreparedStatement statement = connection.prepareStatement(database.rename_table("pwi_" + this.name, "pwi_" + newName));
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(database.rename_table(this.name, newName)))
+        {
             statement.executeUpdate();
-            statement.close();
-            connection.close();
         }
-        catch (Exception exception)
+        catch (SQLException exception)
         {
             exception.printStackTrace();
             return new GroupActionResult(false, Messages.mysql_not_connected);
         }
 
         String oldName = this.name;
-
         this.name = newName;
 
         return new GroupActionResult(true, "§2Group §l" + oldName + " §2was renamed to §l " + this.name + "§2.");
@@ -163,6 +163,7 @@ public class Group
     public static GroupActionResult createGroup (String groupName)
     {
         //TODO: make every mysql action Async.
+        Bukkit.broadcastMessage("§6 From groups.yml: " + groupName); //TODO: Debug.
 
         if (!groupName.matches("\\w{0,20}"))
             return new GroupActionResult(false, "§cInvalid group name. ([A-Za-z_] length: 0-20)");
@@ -170,17 +171,14 @@ public class Group
         if (Group.getGroup(groupName) != null)
             return new GroupActionResult(false, "§cGroup §l" + groupName + " §calready exists.");
 
-        try
-        {
-            Database database = PerWorldInventory.mainDatabase;
-            Connection connection = database.getConnection();
+        Database database = PerWorldInventory.getMainDatabase();
 
-            PreparedStatement statement = connection.prepareStatement(database.create_table("pwi_" + groupName));
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(database.create_table(groupName)))
+        {
             statement.executeUpdate();
-            statement.close();
-            connection.close();
         }
-        catch (Exception exception)
+        catch (SQLException exception)
         {
             exception.printStackTrace();
         }
@@ -197,21 +195,19 @@ public class Group
      *
      * @return GroupActionResult.
      */
-    public GroupActionResult Delete ()
+    public GroupActionResult delete ()
     {
         if (this.equals(getDefaultGroup()))
             return new GroupActionResult(false, "§cCan't delete default group.");
 
-        try
-        {
-            Database database = PerWorldInventory.mainDatabase;
-            Connection connection = database.getConnection();
+        Database database = PerWorldInventory.getMainDatabase();
 
-            PreparedStatement statement = connection.prepareStatement("DROP TABLE pwi_" + this.name);
+        try (Connection connection = database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(database.delete_table(this.name)))
+        {
             statement.executeUpdate();
-            statement.close();
         }
-        catch (Exception exception)
+        catch (SQLException exception)
         {
             exception.printStackTrace();
         }
@@ -226,10 +222,9 @@ public class Group
      */
     public static void databaseFail ()
     {
-        PerWorldInventory.mainDatabase = PerWorldInventory.getTempDatabase();
+        PerWorldInventory.setMainDatabase(PerWorldInventory.getTempDatabase());
 
-        for (Player player : Bukkit.getOnlinePlayers())
-            player.kickPlayer(Messages.mysql_fail_kick);
+        Utils.kickAllPlayers(Messages.mysql_fail_kick);
 
         Bukkit.shutdown();
     }
@@ -239,55 +234,53 @@ public class Group
      */
     public static void checkForTempDatabase ()
     {
-        File tempDatabaseFile = new File(PerWorldInventory.getInstance().getDataFolder(), "TempDatabase.db");
+        File tempDatabaseFile = new File(PerWorldInventory.getInstance().getDataFolder(), PerWorldInventory.tempDatabaseFileName + ".db");
 
         if (!tempDatabaseFile.exists())
             return;
 
-        Database mysql = PerWorldInventory.mainDatabase;
-        Database sqlite = new SQLite("TempDatabase", false);
-        sqlite.Connect(0);
+        Database mainDatabase = PerWorldInventory.getMainDatabase();
+        Database tempDatabase = new SQLite(PerWorldInventory.tempDatabaseFileName, false);
+        tempDatabase.connect();
 
-        try
+        try (Connection mainConnection = mainDatabase.getConnection();
+             Connection tempConnection = tempDatabase.getConnection();
+             PreparedStatement tempTablesStmt = tempConnection.prepareStatement("SELECT name FROM main.sqlite_master WHERE type='table'");
+             ResultSet tempTablesRs = tempTablesStmt.executeQuery())
         {
-            Connection mysqlConnection = mysql.getConnection();
-            Connection sqliteConnection = sqlite.getConnection();
 
-            PreparedStatement sqliteTablesStmt = sqliteConnection.prepareStatement("SELECT name FROM main.sqlite_master WHERE type='table'");
-            ResultSet sqliteTablesRs = sqliteTablesStmt.executeQuery();
-
-            while (sqliteTablesRs.next())
+            while (tempTablesRs.next())
             {
-                String table = sqliteTablesRs.getString(1);
+                String table = tempTablesRs.getString(1);
 
-                PreparedStatement sqliteRecordsStmt = sqliteConnection.prepareStatement("SELECT * FROM " + table);
-                ResultSet sqliteRecordsRs = sqliteRecordsStmt.executeQuery();
-
-                while (sqliteRecordsRs.next())
+                try (PreparedStatement tempRecordsStmt = tempConnection.prepareStatement("SELECT * FROM " + table);
+                     ResultSet tempRecordsRs = tempRecordsStmt.executeQuery())
                 {
-                    PreparedStatement mysqlRecordsInsertStmt = mysqlConnection.prepareStatement(mysql.insert_player_data(table));
-                    mysqlRecordsInsertStmt.setString(1, sqliteRecordsRs.getString("username"));
-                    mysqlRecordsInsertStmt.setString(2, sqliteRecordsRs.getString("uuid"));
-                    mysqlRecordsInsertStmt.setString(3, sqliteRecordsRs.getString("data"));
-
-                    mysqlRecordsInsertStmt.executeUpdate();
-                    mysqlRecordsInsertStmt.close();
+                    while (tempRecordsRs.next())
+                    {
+                        try (PreparedStatement mainRecordsInsertStmt = mainConnection.prepareStatement(mainDatabase.insert_player_data(table)))
+                        {
+                            mainRecordsInsertStmt.setString(1, tempRecordsRs.getString("username"));
+                            mainRecordsInsertStmt.setString(2, tempRecordsRs.getString("uuid"));
+                            mainRecordsInsertStmt.setString(3, tempRecordsRs.getString("data"));
+                            mainRecordsInsertStmt.executeUpdate();
+                        }
+                    }
                 }
             }
 
-            sqliteTablesRs.close();
-            sqliteTablesStmt.close();
-            mysqlConnection.close();
-            sqliteConnection.close();
-            PerWorldInventory.getInstance().getLogger().info("§2Successfully saved TempDatabase to MySQL.");
+            Logger.info("§2Successfully loaded temp database to main database.");
         }
-        catch (Exception exception)
+        catch (SQLException exception)
         {
             exception.printStackTrace();
         }
 
-        sqlite.Disconnect();
-        tempDatabaseFile.delete();
+        tempDatabase.disconnect();
+
+        boolean deleteResult = tempDatabaseFile.delete();
+        if (!deleteResult)
+            Logger.error(Error.TEMP_DATABASE_FILE_DELETE_FAIL);
     }
 
     /**
@@ -299,6 +292,14 @@ public class Group
      */
     public static Group getGroupByWorld (String worldName, boolean returnDefault)
     {
+        Group group = groups.stream().filter(sgroup -> sgroup.worlds.stream().anyMatch(worldName::equals)).findAny().orElse(null);
+
+        if (group == null && returnDefault)
+            return getDefaultGroup();
+
+        return group;
+
+        /*
         for (Group group : groups)
         {
             for (String world : group.worlds)
@@ -311,7 +312,7 @@ public class Group
         if (returnDefault)
             return getDefaultGroup();
         else
-            return null;
+            return null;*/
     }
 
     /**
@@ -321,13 +322,12 @@ public class Group
      */
     private static Group getDefaultGroup ()
     {
-        for (Group group : groups)
-        {
-            if (group.getName().equals(DEFAULT_GROUP_NAME))
-                return group;
-        }
+        Group defaultGroup = groups.stream().filter(group -> group.getName().equals(DEFAULT_GROUP_NAME)).findAny().orElse(null);
 
-        return (Group) createGroup(DEFAULT_GROUP_NAME).value;
+        if (defaultGroup != null)
+            return defaultGroup;
+        else
+            return (Group) createGroup(DEFAULT_GROUP_NAME).value;
     }
 
     /**
@@ -339,13 +339,7 @@ public class Group
      */
     public static Group getGroup (String groupName)
     {
-        for (Group group : groups)
-        {
-            if (group.getName().equals(groupName))
-                return group;
-        }
-
-        return null;
+        return groups.stream().filter(group -> group.getName().equals(groupName)).findAny().orElse(null);
     }
 
     /**
@@ -356,6 +350,7 @@ public class Group
      */
     public static List<String> getFreeWorlds ()
     {
+        //TODO: Change to stream technique.
         List<String> result = new ArrayList<String>();
 
         for (World word : Bukkit.getWorlds())
@@ -391,17 +386,10 @@ public class Group
      */
     public static List<String> getGroupsNames (boolean includeDefaultGroup)
     {
-        List<String> groupsNames = new ArrayList<String>();
-
-        for (Group group : groups)
-        {
-            if (group.equals(getDefaultGroup()) && !includeDefaultGroup)
-                continue;
-
-            groupsNames.add(group.getName());
-        }
-
-        return groupsNames;
+        if (includeDefaultGroup)
+            return groups.stream().map(group -> group.getName()).collect(Collectors.toList());
+        else
+            return groups.stream().filter(group -> !group.equals(getDefaultGroup())).map(group -> group.getName()).collect(Collectors.toList());
     }
 
     /**
@@ -425,7 +413,7 @@ public class Group
      */
     public static void loadGroups ()
     {
-        File groupsFile = new File(PerWorldInventory.getInstance().getDataFolder(), "groups.yml");
+        File groupsFile = new File(PerWorldInventory.getInstance().getDataFolder(), GROUPS_FILE_NAME + ".yml");
         Group.groupsFile = new YamlConfiguration();
 
         try
@@ -443,11 +431,33 @@ public class Group
         groups = new HashSet<>();
 
         for (String groupPath : Group.groupsFile.getKeys(false))
-        {
             groups.add(new Group(Group.groupsFile.getConfigurationSection(groupPath)));
-        }
 
         getDefaultGroup();
+        createTables();
+    }
+
+    /**
+     * Performs "CREATE IF NOT EXISTS" sql on all groups, so if some table gets deleted, it will be recreated.
+     */
+    private static void createTables ()
+    {
+        Database database = PerWorldInventory.getMainDatabase();
+
+        try (Connection connection = database.getConnection())
+        {
+            for (Group group : groups)
+            {
+                try (PreparedStatement statement = connection.prepareStatement(database.create_table(group.getName())))
+                {
+                    statement.executeUpdate();
+                }
+            }
+        }
+        catch (SQLException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -478,11 +488,11 @@ public class Group
 
     /**
      * Serializes the group to ConfigurationSection
+     *
      * @return Serialized ConfigurationSection.
      */
     public ConfigurationSection Serialize ()
     {
-        //TODO this method
         ConfigurationSection section = new YamlConfiguration().createSection(this.name);
 
         section.set("savedData", this.savedData.Serialize());
@@ -500,8 +510,8 @@ public class Group
     {
         PlayerData playerData = PlayerData.getPlayerData(player);
 
-        Database database = PerWorldInventory.mainDatabase;
-        String sql = database.insert_player_data("pwi_" + name);
+        Database database = PerWorldInventory.getMainDatabase();
+        String sql = database.insert_player_data(name);
 
         String data = playerData.Serialize();
 
@@ -514,7 +524,7 @@ public class Group
 
             statement.executeUpdate();
         }
-        catch (Exception exception)
+        catch (SQLException exception)
         {
             exception.printStackTrace();
             Group.databaseFail();
@@ -524,12 +534,14 @@ public class Group
     /**
      * Saves custom playerData to player.
      *
-     * @param player Player, whose data to save.
+     * @param player     Player, whose data to save.
+     * @param playerData Player data to save for this player.
+     * @return boolean if the operation was successful or not.
      */
-    public void savePlayerData (Player player, PlayerData playerData)
+    public boolean savePlayerData (Player player, PlayerData playerData)
     {
-        Database database = PerWorldInventory.mainDatabase;
-        String sql = database.insert_player_data("pwi_" + name);
+        Database database = PerWorldInventory.getMainDatabase();
+        String sql = database.insert_player_data(name);
 
         String data = playerData.Serialize();
 
@@ -541,12 +553,16 @@ public class Group
             statement.setString(3, data);
 
             statement.executeUpdate();
+
+            return true;
         }
-        catch (Exception exception)
+        catch (SQLException exception)
         {
             exception.printStackTrace();
             Group.databaseFail();
         }
+
+        return false;
     }
 
     /**
@@ -554,7 +570,7 @@ public class Group
      *
      * @param player Player, whose data to save.
      */
-    public void savePlayerDataAsync (Player player)
+    public void savePlayerDataAsync (Player player, Consumer<Player> successful, Consumer<Player> unsuccessful)
     {
         PlayerData playerData = PlayerData.getPlayerData(player);
 
@@ -579,8 +595,8 @@ public class Group
         //TODO: Make this ASync.
         PlayerData playerData = null;
 
-        Database database = PerWorldInventory.mainDatabase;
-        String sql = database.select_player_data_by_uuid("pwi_" + this.name);
+        Database database = PerWorldInventory.getMainDatabase();
+        String sql = database.select_player_data_by_uuid(this.name);
 
         try (Connection connection = database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql))
@@ -595,6 +611,7 @@ public class Group
         }
         catch (SQLException exception)
         {
+            Bukkit.broadcastMessage("§6§l EXCEPTION THROWN.");
             exception.printStackTrace();
             databaseFail();
         }
@@ -613,8 +630,8 @@ public class Group
         //TODO: Make this ASync.
         PlayerData playerData = null;
 
-        Database database = PerWorldInventory.mainDatabase;
-        final String sql = database.select_player_data_by_name("pwi_" + this.name);
+        Database database = PerWorldInventory.getMainDatabase();
+        final String sql = database.select_player_data_by_name(this.name);
 
         try (Connection connection = database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql))
@@ -627,7 +644,7 @@ public class Group
                     playerData = new PlayerData(resultSet.getString("data"));
             }
         }
-        catch (Exception exception)
+        catch (SQLException exception)
         {
             exception.printStackTrace();
             databaseFail();
